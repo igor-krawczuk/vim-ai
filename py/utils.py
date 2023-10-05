@@ -13,6 +13,10 @@ import traceback
 
 is_debugging = vim.eval("g:vim_ai_debug") == "1"
 debug_log_file = vim.eval("g:vim_ai_debug_log_file")
+def get_completions_url():
+    return os.environ.get("vLLM_COMPLETIONS_URL",'https://api.openai.com/v1/completions')
+def get_chat_completions_url():
+    return 'https://api.openai.com/v1/chat/completions'
 
 def load_api_key():
     config_file_path = os.path.join(os.path.expanduser("~"), ".config/openai.token")
@@ -48,7 +52,7 @@ def normalize_config(config):
 def make_openai_options(options):
     max_tokens = int(options['max_tokens'])
     return {
-        'model': options['model'],
+        'model': os.environ.get("vLLM_MODEL",options['model']),
         'max_tokens': max_tokens if max_tokens > 0 else None,
         'temperature': float(options['temperature']),
     }
